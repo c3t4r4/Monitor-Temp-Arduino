@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Arduino Monitor Server</title>
+    <link rel="icon" type="image/x-icon" href="/src/arduino.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/src/output.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200">
+    <div class="min-h-full">
+        <div class="bg-gray-800 pb-32">
+            <header class="py-10">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-white text-center">Arduino Monitor Server</h1>
+                </div>
+            </header>
+        </div>
+
+        <main class="-mt-32">
+            <div class="mx-auto max-w-max px-4 py-4 bg-gray-100 m-4 shadow sm:rounded-lg">
+                <div>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Temperatura</h1>
+                            <iframe width="400" height="250" src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Umidade</h1>
+                            <iframe width="400" height="250"  src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Sinal Wifi</h1>
+                            <iframe width="400" height="250"  src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Atualizações</h1>
+                            <iframe width="400" height="250"  src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID"></iframe>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="mx-auto max-w-max px-4 py-4 bg-gray-100 m-4 shadow sm:rounded-lg">
+                <div>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-4">
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Temperatura</h1>
+                            <iframe width="450" height="260" src="https://thingspeak.com/channels/IDCHANNEL/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Temperatura&type=line"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Umidade</h1>
+                            <iframe width="450" height="260"  src="https://thingspeak.com/channels/IDCHANNEL/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Umidade&type=line"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Sinal Wifi</h1>
+                            <iframe width="450" height="260"  src="https://thingspeak.com/channels/IDCHANNEL/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Sinal+Wifi&type=line"></iframe>
+                        </div>
+                        <div class="overflow-hidden rounded-lg bg-white shadow justify-center">
+                            <h1 class="text-xl text-center p-4">Atualizações</h1>
+                            <iframe width="450" height="260"  src="https://thingspeak.com/channels/IDCHANNEL/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Uptime&type=line"></iframe>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>
