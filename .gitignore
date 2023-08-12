@@ -1,3 +1,4 @@
 WebPage/index.html
 WebPage/node_modules
 secrets.h
+.DS_Store

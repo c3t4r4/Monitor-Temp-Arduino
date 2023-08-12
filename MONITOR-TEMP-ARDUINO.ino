@@ -93,6 +93,8 @@ void loop() {
   if(test == 0){
     test = 1;
     sendMessage("Ligando Monitor Arduino!");
+  }else if(test == 2880){
+    sendMessage("Novo dia - Monitor Arduino!");
   }
 
   if(Temperature > 25){
