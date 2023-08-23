@@ -9,6 +9,7 @@
 
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 
+
 // ----------------- API Tringspeak -----------------------
 unsigned long myChannelNumber = SECRET_CH_ID;
 const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
