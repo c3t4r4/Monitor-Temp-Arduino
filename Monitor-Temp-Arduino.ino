@@ -16,13 +16,14 @@ unsigned long myChannelNumber = SECRET_CH_ID;
 const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 // ----------------- Wifi -----------------------
+
 const char *ssid = SECRET_SSID;     // Enter SSID here
 const char *password = SECRET_PASS; // Enter Password here
 
 // ----------------- API CallMeBot.com -----------------------
-String wpPhone = WP_PHONE;
-String wpAPI = WP_KEY;
-String messageWP="";
+String wpPhone[10] = {WP_PHONE, WP_PHONE2};
+String wpAPI[10] = {WP_KEY, WP_KEY2};
+String messageWP = "";
 const char fingerprint[] PROGMEM = "7F:08:BF:52:2A:FA:E9:32:36:DD:0D:D4:2F:FE:D5:7B:A8:04:35:55";
 const String host = "https://api.callmebot.com";
 const int httpPort = 443;
@@ -43,7 +44,7 @@ int test = 0;
 void setup()
 {
   // initialize digital pin LED_BUILTIN as an output.
-  //pinMode(LED_BUILTIN, OUTPUT);
+  // pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
   delay(100);
 
@@ -53,7 +54,7 @@ void setup()
   SetTime();
   clientssl.setInsecure(); // the magic line, use with caution
   ThingSpeak.begin(client);
-  sendMessage("Hello from ESP8266!");
+  sendMessage("Hello from BABUINO-ESP8266!");
 }
 
 void loop()
@@ -104,16 +105,17 @@ void loop()
   if (test == 0)
   {
     test = 1;
-    sendMessage("Ligando Monitor Arduino!");
+    // sendMessage("Ligando Monitor Arduino!");
   }
   else if (test == 2880)
   {
-    sendMessage("Novo dia - Monitor Arduino!");
+    // sendMessage("Novo dia - Monitor Arduino!");
   }
 
   if (Temperature > 25)
   {
-    sendMessage(messageWP);
+    String Dt = SetTime();
+    sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA " + String((int)Temperature) + "°C");
   }
 
   // Wait 30 seconds to update the channel again
@@ -130,16 +132,14 @@ void sendData(void)
   if (httpCode == 200)
   {
     Serial.println("Channel write successful.");
-    sendMessage("Channel write successful");
+    // sendMessage("Channel write successful");
   }
   else
   {
     Serial.println("Problem writing to channel. HTTP error code " + String(httpCode));
-    sendMessage(String(httpCode));
+    // sendMessage(String(httpCode));
   }
 }
-
-
 
 void FazConexaoWiFi(void)
 {
@@ -157,53 +157,53 @@ void FazConexaoWiFi(void)
   SetTime();
   Serial.println("IP obtido: ");
   Serial.println(WiFi.localIP());
-
   delay(1000);
 }
 
-
-
-void SetTime(void)
+String SetTime(void)
 {
-  	// Set time via NTP, as required for x.509 validation
-	configTime(0, 0, "pool.ntp.org", "time.nist.gov");
-	time_t now = time(nullptr);
-	while (now < 8 * 3600 * 2) {
-		delay(500);
-		now = time(nullptr);
+  // Set time via NTP, as required for x.509 validation
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2)
+  {
+    delay(500);
+    now = time(nullptr);
   }
   Serial.println("");
   struct tm timeinfo;
   gmtime_r(&now, &timeinfo);
-  timeinfo.tm_hour = timeinfo.tm_hour-3;
+  timeinfo.tm_hour = timeinfo.tm_hour - 3;
   Serial.print("Current time: ");
   Serial.print(asctime(&timeinfo));
-
+  return (asctime(&timeinfo));
 }
-
-
 
 void sendMessage(String message)
 {
-  WiFiClient client; 
+  WiFiClient client;
   HTTPClient http;
- String link = "http://api.callmebot.com/whatsapp.php?phone=" + wpPhone + "&apikey=" + wpAPI + "&text=" + urlEncode(message);
-  http.begin(client,link);
-  // Specify content-type header
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  // Send HTTP POST request
-  int httpResponseCode = http.GET();
-  if (httpResponseCode == 200)
+
+  for (int n = 0; n < sizeof(*wpPhone); n++)
   {
-    Serial.print("Message sent successfully:" + message);
-  }
-  else
-  {
-    Serial.println("Error sending the message");
-    Serial.print("HTTP response code: ");
-    Serial.println(httpResponseCode);
-    String payload = http.getString();
-    Serial.println(payload);
+    String link = "http://api.callmebot.com/whatsapp.php?phone=" + wpPhone[n] + "&apikey=" + wpAPI[n] + "&text=" + urlEncode(message);
+    http.begin(client, link);
+    // Specify content-type header
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    // Send HTTP POST request
+    int httpResponseCode = http.GET();
+    if (httpResponseCode == 200)
+    {
+      Serial.print("Message sent successfully:" + message);
+    }
+    else
+    {
+      Serial.println("Error sending the message");
+      Serial.print("HTTP response code: ");
+      Serial.println(httpResponseCode);
+      String payload = http.getString();
+      Serial.println(payload);
+    }
   }
   // Free resources
   http.end();
