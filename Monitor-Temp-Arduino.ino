@@ -21,8 +21,8 @@ const char *ssid = SECRET_SSID;      // Enter SSID here
 const char *password = SECRET_PASS;  // Enter Password here
 
 // ----------------- API CallMeBot.com -----------------------
-String wpPhone[10] = { WP_PHONE, WP_PHONE2 };
-String wpAPI[10] = { WP_KEY, WP_KEY2 };
+String wpPhone[10] = { WP_PHONE, WP_PHONE2,WP_PHONE3, WP_PHONE4 };
+String wpAPI[10] = { WP_KEY, WP_KEY2, WP_KEY3, WP_KEY4 };
 String messageWP = "";
 const char fingerprint[] PROGMEM = "7F:08:BF:52:2A:FA:E9:32:36:DD:0D:D4:2F:FE:D5:7B:A8:04:35:55";
 const String host = "https://api.callmebot.com";
