@@ -8,8 +8,8 @@
 #include "DHT.h"
 #include "certs.h"
 
-#define DHTTYPE DHT22 // DHT 22  (AM2302), AM2321
-#define LED_BUILTIN 2 // turn on led port board Metanol
+#define DHTTYPE DHT22  // DHT 22  (AM2302), AM2321
+#define LED_BUILTIN 2  // turn on led port board Metanol
 
 // ----------------- API Tringspeak -----------------------
 unsigned long myChannelNumber = SECRET_CH_ID;
@@ -17,12 +17,12 @@ const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 // ----------------- Wifi -----------------------
 
-const char *ssid = SECRET_SSID;     // Enter SSID here
-const char *password = SECRET_PASS; // Enter Password here
+const char *ssid = SECRET_SSID;      // Enter SSID here
+const char *password = SECRET_PASS;  // Enter Password here
 
 // ----------------- API CallMeBot.com -----------------------
-String wpPhone[10] = {WP_PHONE, WP_PHONE2};
-String wpAPI[10] = {WP_KEY, WP_KEY2};
+String wpPhone[10] = { WP_PHONE, WP_PHONE2 };
+String wpAPI[10] = { WP_KEY, WP_KEY2 };
 String messageWP = "";
 const char fingerprint[] PROGMEM = "7F:08:BF:52:2A:FA:E9:32:36:DD:0D:D4:2F:FE:D5:7B:A8:04:35:55";
 const String host = "https://api.callmebot.com";
@@ -39,10 +39,9 @@ float Temperature;
 float Humidity;
 long Rssi;
 int UpdateTimes = 0;
-int test = 0;
+bool TempNormal = true;
 
-void setup()
-{
+void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   // pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
@@ -52,16 +51,14 @@ void setup()
   dht.begin();
   FazConexaoWiFi();
   SetTime();
-  clientssl.setInsecure(); // the magic line, use with caution
+  clientssl.setInsecure();  // the magic line, use with caution
   ThingSpeak.begin(client);
   sendMessage("Hello from BABUINO-ESP8266!");
 }
 
-void loop()
-{
+void loop() {
   // Connect or reconnect to WiFi
-  if (WiFi.status() != WL_CONNECTED)
-  {
+  if (WiFi.status() != WL_CONNECTED) {
     FazConexaoWiFi();
   }
   SetTime();
@@ -96,61 +93,57 @@ void loop()
   messageWP = messageWP + "Sinal Wifi: " + String((int)Rssi) + "\n";
 
   // Serial.print("Sinal Wifi: ");
-  // Serial.println((int)Rssi);
+ // Serial.println((int)(Rssi / 2) * -1);
 
   UpdateTimes = UpdateTimes + 1;
 
   sendData();
 
-  if (test == 0)
-  {
-    test = 1;
-    // sendMessage("Ligando Monitor Arduino!");
-  }
-  else if (test == 2880)
-  {
-    // sendMessage("Novo dia - Monitor Arduino!");
+    
+
+
+  if (Temperature > 25) {
+    TempNormal = false;
+    String Dt = SetTime();
+    sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
+    sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
+    delay(300000);
   }
 
-  if (Temperature > 25)
-  {
+  if (Temperature < 25 && Temperature > 20) {
     String Dt = SetTime();
-    sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA " + String((int)Temperature) + "°C");
+    sendMessage("DATA: " + Dt + " - Temperatura da sala ESTABILIZANDO  : TEMPERATURA " + String((int)Temperature) + "°C - ");
+    sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
+    delay(300000);
   }
 
   // Wait 30 seconds to update the channel again
   delay(30000);
 }
 
-void sendData(void)
-{
+void sendData(void) {
   ThingSpeak.setField(1, Temperature);
   ThingSpeak.setField(2, Humidity);
   ThingSpeak.setField(3, Rssi);
   ThingSpeak.setField(4, UpdateTimes);
   int httpCode = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
-  if (httpCode == 200)
-  {
+  if (httpCode == 200) {
     Serial.println("Channel write successful.");
     // sendMessage("Channel write successful");
-  }
-  else
-  {
+  } else {
     Serial.println("Problem writing to channel. HTTP error code " + String(httpCode));
     // sendMessage(String(httpCode));
   }
 }
 
-void FazConexaoWiFi(void)
-{
+void FazConexaoWiFi(void) {
   Serial.println("Conectando-se à rede WiFi...");
   Serial.println();
   delay(1000);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print(".-.-");
   }
   Serial.println("");
   Serial.println("WiFi connectado com sucesso!");
@@ -160,13 +153,11 @@ void FazConexaoWiFi(void)
   delay(1000);
 }
 
-String SetTime(void)
-{
+String SetTime(void) {
   // Set time via NTP, as required for x.509 validation
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2)
-  {
+  while (now < 8 * 3600 * 2) {
     delay(500);
     now = time(nullptr);
   }
@@ -179,25 +170,20 @@ String SetTime(void)
   return (asctime(&timeinfo));
 }
 
-void sendMessage(String message)
-{
+void sendMessage(String message) {
   WiFiClient client;
   HTTPClient http;
 
-  for (int n = 0; n < sizeof(*wpPhone); n++)
-  {
+  for (int n = 0; n < sizeof(*wpPhone); n++) {
     String link = "http://api.callmebot.com/whatsapp.php?phone=" + wpPhone[n] + "&apikey=" + wpAPI[n] + "&text=" + urlEncode(message);
     http.begin(client, link);
     // Specify content-type header
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     // Send HTTP POST request
     int httpResponseCode = http.GET();
-    if (httpResponseCode == 200)
-    {
+    if (httpResponseCode == 200) {
       Serial.print("Message sent successfully:" + message);
-    }
-    else
-    {
+    } else {
       Serial.println("Error sending the message");
       Serial.print("HTTP response code: ");
       Serial.println(httpResponseCode);
