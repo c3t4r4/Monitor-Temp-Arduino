@@ -7,9 +7,10 @@
 #include "secrets.h"
 #include "DHT.h"
 #include "certs.h"
-
-#define DHTTYPE DHT22  // DHT 22  (AM2302), AM2321
-#define LED_BUILTIN 2  // turn on led port board Metanol
+#include "HTTPClient.h"
+#include <ArduinoJson.h>
+#define DHTTYPE DHT22 // DHT 22  (AM2302), AM2321
+#define LED_BUILTIN 2 // turn on led port board Metanol
 
 // ----------------- API Tringspeak -----------------------
 unsigned long myChannelNumber = SECRET_CH_ID;
@@ -17,13 +18,17 @@ const char *myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 // ----------------- Wifi -----------------------
 
-const char *ssid = SECRET_SSID;      // Enter SSID here
-const char *password = SECRET_PASS;  // Enter Password here
+const char *ssid = SECRET_SSID;     // Enter SSID here
+const char *password = SECRET_PASS; // Enter Password here
 
 // ----------------- API CallMeBot.com -----------------------
-String wpPhone[10] = { WP_PHONE, WP_PHONE2,WP_PHONE3, WP_PHONE4 };
-String wpAPI[10] = { WP_KEY, WP_KEY2, WP_KEY3, WP_KEY4 };
+String wpPhone[10] = {WP_PHONE, WP_PHONE2, WP_PHONE3, WP_PHONE4};
+String wpAPI[10] = {WP_KEY, WP_KEY2, WP_KEY3, WP_KEY4};
 String messageWP = "";
+//--------------element-------------//
+const String token_el = ACCESS_TOKEN;
+const String room_el = ROOM_ID;
+
 const char fingerprint[] PROGMEM = "7F:08:BF:52:2A:FA:E9:32:36:DD:0D:D4:2F:FE:D5:7B:A8:04:35:55";
 const String host = "https://api.callmebot.com";
 const int httpPort = 443;
@@ -41,7 +46,8 @@ long Rssi;
 int UpdateTimes = 0;
 bool TempNormal = true;
 
-void setup() {
+void setup()
+{
   // initialize digital pin LED_BUILTIN as an output.
   // pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
@@ -51,14 +57,17 @@ void setup() {
   dht.begin();
   FazConexaoWiFi();
   SetTime();
-  clientssl.setInsecure();  // the magic line, use with caution
+  clientssl.setInsecure(); // the magic line, use with caution
   ThingSpeak.begin(client);
-  sendMessage("Hello from BABUINO-ESP8266!");
+  sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT");
+  sendMessageElement("Hello from BABUINO-ESP8266!- ELEMENT");
 }
 
-void loop() {
+void loop()
+{
   // Connect or reconnect to WiFi
-  if (WiFi.status() != WL_CONNECTED) {
+  if (WiFi.status() != WL_CONNECTED)
+  {
     FazConexaoWiFi();
   }
   SetTime();
@@ -93,27 +102,19 @@ void loop() {
   messageWP = messageWP + "Sinal Wifi: " + String((int)Rssi) + "\n";
 
   // Serial.print("Sinal Wifi: ");
- // Serial.println((int)(Rssi / 2) * -1);
+  // Serial.println((int)(Rssi / 2) * -1);
 
   UpdateTimes = UpdateTimes + 1;
 
   sendData();
 
-    
-
-
-  if (Temperature > 25) {
+  if (Temperature > 25)
+  {
     TempNormal = false;
     String Dt = SetTime();
     sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
     sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
-    delay(300000);
-  }
-
-  if (Temperature < 25 && Temperature > 20) {
-    String Dt = SetTime();
-    sendMessage("DATA: " + Dt + " - Temperatura da sala ESTABILIZANDO  : TEMPERATURA " + String((int)Temperature) + "°C - ");
-    sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
+     sendMessageElement("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
     delay(300000);
   }
 
@@ -121,43 +122,51 @@ void loop() {
   delay(30000);
 }
 
-void sendData(void) {
+void sendData(void)
+{
   ThingSpeak.setField(1, Temperature);
   ThingSpeak.setField(2, Humidity);
   ThingSpeak.setField(3, Rssi);
   ThingSpeak.setField(4, UpdateTimes);
   int httpCode = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
-  if (httpCode == 200) {
-    Serial.println("Channel write successful.");
+  if (httpCode == 200)
+  {
+    Serial.println("Channel write successful.\n");
     // sendMessage("Channel write successful");
-  } else {
-    Serial.println("Problem writing to channel. HTTP error code " + String(httpCode));
+  }
+  else
+  {
+    Serial.println("Problem writing to channel. HTTP error code " + String(httpCode) + "\n");
     // sendMessage(String(httpCode));
   }
 }
 
-void FazConexaoWiFi(void) {
-  Serial.println("Conectando-se à rede WiFi...");
+void FazConexaoWiFi(void)
+{
+  Serial.println("Conectando-se à rede WiFi...\n");
   Serial.println();
   delay(1000);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
-    Serial.print(".-.-");
+    Serial.print("(-.-)\n");
   }
   Serial.println("");
-  Serial.println("WiFi connectado com sucesso!");
+  Serial.println("WiFi connectado com sucesso!\n");
   SetTime();
-  Serial.println("IP obtido: ");
+  Serial.println("IP obtido:\n ");
   Serial.println(WiFi.localIP());
   delay(1000);
 }
 
-String SetTime(void) {
+String SetTime(void)
+{
   // Set time via NTP, as required for x.509 validation
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2) {
+  while (now < 8 * 3600 * 2)
+  {
     delay(500);
     now = time(nullptr);
   }
@@ -170,20 +179,25 @@ String SetTime(void) {
   return (asctime(&timeinfo));
 }
 
-void sendMessage(String message) {
+void sendMessage(String message)
+{
   WiFiClient client;
   HTTPClient http;
 
-  for (int n = 0; n < sizeof(*wpPhone); n++) {
+  for (int n = 0; n < sizeof(*wpPhone); n++)
+  {
     String link = "http://api.callmebot.com/whatsapp.php?phone=" + wpPhone[n] + "&apikey=" + wpAPI[n] + "&text=" + urlEncode(message);
     http.begin(client, link);
     // Specify content-type header
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     // Send HTTP POST request
     int httpResponseCode = http.GET();
-    if (httpResponseCode == 200) {
+    if (httpResponseCode == 200)
+    {
       Serial.print("Message sent successfully:" + message);
-    } else {
+    }
+    else
+    {
       Serial.println("Error sending the message");
       Serial.print("HTTP response code: ");
       Serial.println(httpResponseCode);
@@ -192,5 +206,78 @@ void sendMessage(String message) {
     }
   }
   // Free resources
+  http.end();
+}
+
+
+
+void sendMessageElement(String message)
+{
+
+    String url = "https://cryptochat.com.br/_matrix/client/r0/rooms/"+room_el+"/send/m.room.message";
+    String postData;
+  String headers;
+  DynamicJsonDocument doc(1024);  // Ajuste o tamanho da memória JSON de acordo com suas necessidades
+  int httpResponseCode;
+  String payload;
+// Preparar dados da requisição JSON
+  postData = "{\"msgtype\": \"m.text\", \"body\": \"" + message + "\"}";
+
+  // Preparar cabeçalhos da requisição
+  headers = "Content-Type: application/json\nAuthorization: Bearer " + String(token_el);
+
+  // Criar objetos HTTPClient e WiFiClientSecure
+  WiFiClientSecure client;
+  HTTPClient http;
+
+  // Iniciar a requisição HTTP
+  http.begin(client, url);
+
+  // Definir cabeçalhos
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Authorization", "Bearer " + String(token_el));
+
+  // Enviar a requisição POST
+  httpResponseCode = http.POST(postData);
+
+  // Verificar a resposta
+  if (httpResponseCode > 0) {
+    Serial.print("Código de resposta HTTP: ");
+    Serial.println(httpResponseCode);
+
+    if (httpResponseCode == 200) {
+      // Ler a carga da resposta
+      payload = http.getString();
+      Serial.println("Carga da resposta:");
+      Serial.println(payload);
+
+      // Analisar JSON e verificar o sucesso (opcional)
+      deserializeJson(doc, payload);
+
+      if (doc["ok"]) {
+        Serial.println("Mensagem enviada para o grupo com sucesso!");
+      } else {
+        Serial.println("Erro ao enviar a mensagem para o grupo:");
+        // **Opção 1: Assumindo que "error" é uma string**
+        // String errorMessage = doc["error"].as<String>();
+        // Serial.println(errorMessage);
+
+        // **Opção 2: Verificar tipo de dado e usar println específico**
+        if (doc["error"].is<const char*>() ) {
+          Serial.println(doc["error"].as<const char*>() );
+        } else if (doc["error"].is<String>() ) {
+          Serial.println(doc["error"].as<String>() );
+        } else {
+          // ... lidar com outros tipos de dados se necessário
+        }
+      }
+    } else {
+      Serial.println("Erro ao enviar a mensagem ao ELEMENT.");
+    }
+  } else {
+    Serial.println("Falha ao enviar a requisição ao ELEMENT.");
+  }
+
+  // Liberar recursos
   http.end();
 }
