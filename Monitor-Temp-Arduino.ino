@@ -61,7 +61,7 @@ void setup()
   SetTime();
   clientssl.setInsecure(); // the magic line, use with caution
   ThingSpeak.begin(client);
-  sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT\n");
+  //sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT\n");
   sendMessageElement("Hello from BABUINO-ESP8266!-  INICIALIZANDO.");
 }
 
@@ -73,6 +73,7 @@ void loop()
     FazConexaoWiFi();
   }
   SetTime();
+    String Dt = SetTime();
   // monitoring led
   // digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
   // Serial.println("Ligado");
@@ -110,14 +111,19 @@ void loop()
 
   sendData();
 
+ sendMessageElement( Dt + "_" + String((int)Temperature) + "_ " + String((int)Humidity) +"_ " + String((int)Rssi));
+    delay(600000);
+
+
   if (Temperature > 25)
   {
     TempNormal = false;
     String Dt = SetTime();
     //sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
     //sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
-     sendMessageElement("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
-     sendMessageElement("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
+     //sendMessageElement("DATA: _" + Dt + "_ - Umidade: _" + String((int)Humidity) +"_");
+     //sendMessageElement("DATA: _" + Dt + "_ - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: _" + String((int)Temperature) + "_°C - ");
+      sendMessageElement( Dt + "_" + String((int)Temperature) + "_ " + String((int)Humidity) +"_ " + String((int)Rssi));
     delay(300000);
   }
 
