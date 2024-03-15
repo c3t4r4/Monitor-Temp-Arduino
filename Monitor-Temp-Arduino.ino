@@ -61,8 +61,8 @@ void setup()
   SetTime();
   clientssl.setInsecure(); // the magic line, use with caution
   ThingSpeak.begin(client);
-  sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT");
- // sendMessageElement("Hello from BABUINO-ESP8266!- ELEMENT");
+  sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT\n");
+  sendMessageElement("Hello from BABUINO-ESP8266!-  INICIALIZANDO.");
 }
 
 void loop()
@@ -114,8 +114,9 @@ void loop()
   {
     TempNormal = false;
     String Dt = SetTime();
-    sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
-    sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
+    //sendMessage("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
+    //sendMessage("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
+     sendMessageElement("DATA: " + Dt + " - Umidade: " + String((int)Humidity) + "");
      sendMessageElement("DATA: " + Dt + " - VERIFICAR TEMPERATURA DA SALA DO SERVIDOR : TEMPERATURA: " + String((int)Temperature) + "°C - ");
     delay(300000);
   }
@@ -218,7 +219,7 @@ void sendMessage(String message)
 void sendMessageElement(String message_el)
 {
 
-const char* url = "http://179.107.1.50/api/arduino5.php";
+const char* url = "http://179.107.1.50/api/senBotAlerta.php";
 const char* urlSSL = "https://sisint.policiamilitar.sp.gov.br/api/senBotAlerta.php";
    // Variáveis
   WiFiClientSecure client;
@@ -230,8 +231,8 @@ WiFiClient c;
 
  
   // Iniciar a requisição HTTP
-  //http.begin(c, url);
-   http.begin(client, urlSSL);
+  http.begin(c, url);
+  // http.begin(client, urlSSL);
 
   // Definir cabeçalhos
 // Especificar cabeçalho da requisição
