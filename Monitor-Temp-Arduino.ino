@@ -9,6 +9,8 @@
 #include "certs.h"
 #include "HTTPClient.h"
 #include <ArduinoJson.h>
+#include <iostream>
+
 #define DHTTYPE DHT22 // DHT 22  (AM2302), AM2321
 #define LED_BUILTIN 2 // turn on led port board Metanol
 
@@ -132,6 +134,7 @@ void sendData(void)
   if (httpCode == 200)
   {
     Serial.println("Channel write successful.\n");
+    sendMessageElement("Channel write successful");
     // sendMessage("Channel write successful");
   }
   else
@@ -177,6 +180,7 @@ String SetTime(void)
   Serial.print("Current time: ");
   Serial.print(asctime(&timeinfo));
   return (asctime(&timeinfo));
+
 }
 
 void sendMessage(String message)
@@ -214,28 +218,24 @@ void sendMessage(String message)
 void sendMessageElement(String message)
 {
 
-    String url = "https://cryptochat.com.br/_matrix/client/r0/rooms/"+room_el+"/send/m.room.message";
-    String postData;
-  String headers;
-  DynamicJsonDocument doc(1024);  // Ajuste o tamanho da memória JSON de acordo com suas necessidades
-  int httpResponseCode;
-  String payload;
-// Preparar dados da requisição JSON
-  postData = "{\"msgtype\": \"m.text\", \"body\": \"" + message + "\"}";
-
-  // Preparar cabeçalhos da requisição
-  headers = "Content-Type: application/json\nAuthorization: Bearer " + String(token_el);
-
-  // Criar objetos HTTPClient e WiFiClientSecure
+    String url = "https://cryptochat.com.br/_matrix/client/r0/rooms/"+String(room_el)+"/send/m.room.message";
+   // Variáveis
   WiFiClientSecure client;
   HTTPClient http;
+  String postData;
+
+
+  int httpResponseCode;
+
+  // Preparar dados da requisição JSON
+  postData = "{\"msgtype\": \"m.text\", \"body\": \"" + message + "\"}";
 
   // Iniciar a requisição HTTP
   http.begin(client, url);
 
   // Definir cabeçalhos
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("Authorization", "Bearer " + String(token_el));
+http.addHeader("Content-Type", "application/json");
+http.addHeader("Authorization", "Bearer"+token_el);
 
   // Enviar a requisição POST
   httpResponseCode = http.POST(postData);
@@ -246,36 +246,14 @@ void sendMessageElement(String message)
     Serial.println(httpResponseCode);
 
     if (httpResponseCode == 200) {
-      // Ler a carga da resposta
-      payload = http.getString();
-      Serial.println("Carga da resposta:");
-      Serial.println(payload);
-
-      // Analisar JSON e verificar o sucesso (opcional)
-      deserializeJson(doc, payload);
-
-      if (doc["ok"]) {
-        Serial.println("Mensagem enviada para o grupo com sucesso!");
-      } else {
-        Serial.println("Erro ao enviar a mensagem para o grupo:");
-        // **Opção 1: Assumindo que "error" é uma string**
-        // String errorMessage = doc["error"].as<String>();
-        // Serial.println(errorMessage);
-
-        // **Opção 2: Verificar tipo de dado e usar println específico**
-        if (doc["error"].is<const char*>() ) {
-          Serial.println(doc["error"].as<const char*>() );
-        } else if (doc["error"].is<String>() ) {
-          Serial.println(doc["error"].as<String>() );
-        } else {
-          // ... lidar com outros tipos de dados se necessário
-        }
-      }
+      Serial.println("Mensagem enviada com sucesso!");
     } else {
-      Serial.println("Erro ao enviar a mensagem ao ELEMENT.");
+      Serial.println("Erro ao enviar a mensagem:");
+      Serial.print("Código de erro HTTP: ");
+      Serial.println(httpResponseCode);
     }
   } else {
-    Serial.println("Falha ao enviar a requisição ao ELEMENT.");
+    Serial.println("Falha ao enviar a requisição.");
   }
 
   // Liberar recursos
