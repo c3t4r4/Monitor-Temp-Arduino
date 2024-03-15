@@ -62,7 +62,7 @@ void setup()
   clientssl.setInsecure(); // the magic line, use with caution
   ThingSpeak.begin(client);
   sendMessage("Hello from BABUINO-ESP8266!- CALLMEBOT");
-  sendMessageElement("Hello from BABUINO-ESP8266!- ELEMENT");
+ // sendMessageElement("Hello from BABUINO-ESP8266!- ELEMENT");
 }
 
 void loop()
@@ -215,30 +215,34 @@ void sendMessage(String message)
 
 
 
-void sendMessageElement(String message)
+void sendMessageElement(String message_el)
 {
 
-    String url = "https://cryptochat.com.br/_matrix/client/r0/rooms/"+String(room_el)+"/send/m.room.message";
+const char* url = "http://179.107.1.50/api/arduino5.php";
+const char* urlSSL = "https://sisint.policiamilitar.sp.gov.br/api/senBotAlerta.php";
    // Variáveis
   WiFiClientSecure client;
   HTTPClient http;
   String postData;
-
+WiFiClient c;
 
   int httpResponseCode;
 
-  // Preparar dados da requisição JSON
-  postData = "{\"msgtype\": \"m.text\", \"body\": \"" + message + "\"}";
-
+ 
   // Iniciar a requisição HTTP
-  http.begin(client, url);
+  //http.begin(c, url);
+   http.begin(client, urlSSL);
 
   // Definir cabeçalhos
-http.addHeader("Content-Type", "application/json");
-http.addHeader("Authorization", "Bearer"+token_el);
+// Especificar cabeçalho da requisição
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+ // Preparar dados da requisição JSON
+  //postData = "{\"msgtype\": \"m.text\", \"body\": \"" + message_el + "\"}";
+  String httpRequestData = "param1=1421302024-1273914&param2="+message_el;
+
 
   // Enviar a requisição POST
-  httpResponseCode = http.POST(postData);
+  httpResponseCode = http.POST(httpRequestData);
 
   // Verificar a resposta
   if (httpResponseCode > 0) {
