@@ -1,4 +1,47 @@
-WebPage/index.html
-WebPage/node_modules
-secrets.h
+# ========================
+# PLATFORMIO
+# ========================
+
+.pio/
+.pioenvs/
+.piolibdeps/
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+
+# ========================
+# BUILD FILES
+# ========================
+
+*.o
+*.elf
+*.bin
+*.map
+
+# ========================
+# NODE / WEBPAGE
+# ========================
+
+node_modules/
+dist/
+build/
+
+# ========================
+# OS FILES
+# ========================
+
 .DS_Store
+Thumbs.db
+
+# ========================
+# LOGS
+# ========================
+
+*.log
+
+# ========================
+# ENV / SECRETS
+# ========================
+
+secrets.h
+.env
+.env.local

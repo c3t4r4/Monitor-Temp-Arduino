@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+
+<head>
+<title>Arduino Monitor Server</title>
+
+<link rel="icon" type="image/x-icon" href="/src/arduino.png">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="/src/output.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gray-200">
+
+<div class="min-h-full">
+
+<!-- HEADER -->
+
+<div class="bg-gray-800 pb-24">
+
+<header class="py-10">
+
+<div class="mx-auto max-w-7xl px-4 text-center">
+
+<h1 class="text-3xl font-bold text-white">
+Arduino Monitor Server
+</h1>
+
+</div>
+
+</header>
+
+</div>
+
+<!-- MAIN -->
+
+<main class="-mt-20 px-4">
+
+<!-- WIDGETS -->
+
+<div class="mx-auto max-w-7xl bg-gray-100 p-6 shadow rounded-lg mb-6">
+
+<h2 class="text-2xl font-bold mb-6 text-center">
+Status Atual
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<!-- TEMPERATURA -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Temperatura
+</h1>
+
+<iframe class="w-full h-64"
+src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID">
+</iframe>
+
+</div>
+
+<!-- UMIDADE -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Umidade
+</h1>
+
+<iframe class="w-full h-64"
+src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID">
+</iframe>
+
+</div>
+
+<!-- WIFI -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Sinal WiFi
+</h1>
+
+<iframe class="w-full h-64"
+src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID">
+</iframe>
+
+</div>
+
+<!-- UPDATE -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Atualizações
+</h1>
+
+<iframe class="w-full h-64"
+src="https://thingspeak.com/channels/IDCHANNEL/widgets/WIDGETID">
+</iframe>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GRÁFICOS -->
+
+<div class="mx-auto max-w-7xl bg-gray-100 p-6 shadow rounded-lg">
+
+<h2 class="text-2xl font-bold mb-6 text-center">
+Histórico
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<!-- TEMPERATURA -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Temperatura
+</h1>
+
+<iframe class="w-full h-72"
+src="https://thingspeak.com/channels/IDCHANNEL/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Temperatura&type=line">
+</iframe>
+
+</div>
+
+<!-- UMIDADE -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Umidade
+</h1>
+
+<iframe class="w-full h-72"
+src="https://thingspeak.com/channels/IDCHANNEL/charts/2?bgcolor=%23ffffff&color=%231d4ed8&dynamic=true&results=60&title=Umidade&type=line">
+</iframe>
+
+</div>
+
+<!-- WIFI -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Sinal WiFi
+</h1>
+
+<iframe class="w-full h-72"
+src="https://thingspeak.com/channels/IDCHANNEL/charts/3?bgcolor=%23ffffff&color=%23059b00&dynamic=true&results=60&title=Sinal+Wifi&type=line">
+</iframe>
+
+</div>
+
+<!-- UPTIME -->
+
+<div class="bg-white rounded-lg shadow p-4">
+
+<h1 class="text-lg font-semibold text-center mb-2">
+Uptime
+</h1>
+
+<iframe class="w-full h-72"
+src="https://thingspeak.com/channels/IDCHANNEL/charts/4?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Uptime&type=line">
+</iframe>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+</body>
+</html>
